@@ -14,9 +14,12 @@ Clone repo and then run:
 Baseline Results for BioMarco
 --
 
-Pretrained Model  | Finetuned on | Dev MRR @10 |
-------------------| ------------ | ------------|
-bert-base-uncased | MsMarco small| .21         |
+Pretrained Model  | Finetuning Dataset              | Dev MRR @10 |
+------------------| --------------------------------| ------------|
+bert-base-uncased | MsMarco triple.train.small.tsv  | .21         |
+bert-base-uncased | MsMarco-Bio                     | -           |
+
+Downloadload dataset <a href=''>here</a> or follow guide below to reproduce it.
 
 Labelling 10k Passages with Google Natural Language API
 --
