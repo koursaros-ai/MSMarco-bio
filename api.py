@@ -29,7 +29,7 @@ class MsMarco:
             timeout=REQUEST_TIMEOUT)
 
         self.collection_size = 0
-        with open(self.collections_tsv_path) as collection:
+        with open(str(self.collections_tsv_path)) as collection:
             for _ in collection: self.collection_size += 1
 
         # INDEX MSMARCO
