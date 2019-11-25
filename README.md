@@ -11,6 +11,13 @@ Clone repo and then run:
 
 `pip install -r requirements.txt`
 
+Baseline Results for BioMarco
+--
+
+Pretrained Model  | Finetuned on | Dev MRR @10 |
+------------------| ------------ | ------------|
+bert-base-uncased | MsMarco small| .21         |
+
 Labelling 10k Passages with Google Natural Language API
 --
 
