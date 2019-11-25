@@ -65,7 +65,7 @@ def main(args):
               queries_dev_file.write(qid + '\t' + queries[qid] + '\n')
             else:
               doc_ids, docs = api.es_query(queries[qid], 100)
-              negative_example_idx = random.randrange(0, 100)
+              negative_example_idx = random.randrange(0, len(docs)-1)
               # if negative example is the same as the positive, choose the next instead
               if doc_ids[negative_example_idx] == doc_id:
                 negative_example_idx += 1
