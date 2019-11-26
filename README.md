@@ -24,7 +24,7 @@ Pretrained Model  | Finetuning Dataset              | BioMARCO Dev MRR@10 <sup>[
 <a href = 'https://github.com/naver/biobert-pretrained'>biobert-pubmed-v1.1</a> | MSMarco | 0.17070 | 
 BM25 | - | 0.10366
 
-Download dataset <a href='https://storage.googleapis.com/koursaros/bio-collectionandqueries.tar.gz'>here</a> or follow guide below to build it.
+Download dataset <a href='https://storage.googleapis.com/koursaros/bio-collectionandqueries.tar.gz'>here</a> or follow guide below to build it. Look <a href = 'https://github.com/microsoft/MSMARCO-Passage-Ranking'>here</a> for more details about the format of the files.
 
 Check out our main project <a href = 'https://github.com/koursaros-ai/nboost'>NBoost</a> to download and deploy the models with Elasticsearch.
 
