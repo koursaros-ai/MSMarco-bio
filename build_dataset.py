@@ -43,15 +43,12 @@ def main(args):
       qrels.add((qid, doc_id))
       docs_to_queries[doc_id] = qid
 
-  api = MsMarco('collectionandqueries',host=args.es_host, port=args.es_port, shards=args.shards)
-
   collection_file = os.path.join(args.data_dir, 'collection.tsv')
+  collection_size = len([ _ for line in open(collection_file)])
   example_num = 0
   qrels_dev_file = open(qrels_tsv_path, 'w')
   queries_dev_file = open(queries_tsv_path, 'w')
-  with open(collection_file) as collection, \
-          open(os.path.join(args.out_dir, 'collection.tsv'), 'w') as bio, \
-          open(os.path.join(args.out_dir, 'triples.train.small.tsv'), 'w') as train:
+  with open(collection_file) as collection, open(os.path.join(args.out_dir, 'collection.tsv'), 'w') as bio:
     with tqdm(total=api.collection_size, desc='BUILDING TRAINING SET') as pbar:
       for line in collection:
         doc_id, text = line.strip().split('\t')

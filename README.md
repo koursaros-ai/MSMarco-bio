@@ -3,23 +3,24 @@ MSMarco-Bio
 
 There is a notable lack of large scale, easy to use, labeled data sets for information retrieval in health / medicine.
 
-However, Microsoft published a **huge** collection of bing queries and corresponding correct search results, many of which, it turns out, are related to health, medicine and biology.
-
-This repo includes code to generate a subset of **75,000 MS Marco queries related to health**, but it could easily be adapted for any specific domain.
+This repo includes code to generate a subset of **75,000 labeled MS Marco queries related to health and biology**, but it could easily be adapted for any specific domain.
 
 Clone repo and then run:
 
 `pip install -r requirements.txt`
 
-Baseline Results for BioMarco
+Baseline Results for BioMARCO
 --
 
-Pretrained Model  | Finetuning Dataset              | Dev MRR @10 |
-------------------| --------------------------------| ------------|
-bert-base-uncased | MsMarco triple.train.small.tsv  | .21         |
-bert-base-uncased | MsMarco-Bio                     | -           |
+Pretrained Model  | Finetuning Dataset              | BioMARCO Dev MRR@10 <sup>[1]</sup> |
+------------------| --------------------------------| -------------------------------------- |
+<a href = 'https://github.com/nyu-dl/dl4marco-bert'>bert-base-uncased-msmarco</a> | MSMarco  | **0.17281** |
+<a href = 'https://github.com/naver/biobert-pretrained'>biobert-pubmed-v1.1</a> | MSMarco | 0.17070 | 
+BM25 | - | 0.10366
 
-Downloadload dataset <a href=''>here</a> or follow guide below to reproduce it.
+Download dataset <a href=''>here</a> or follow guide below to reproduce it.
+
+<sup>[1]</sup> Reranking top 50 results from BM25
 
 Labelling 10k Passages with Google Natural Language API
 --
@@ -81,6 +82,8 @@ with open(categories_file) as categories:
     for line in categories:
         doc_id, category, confidence = line.split('\t')
         categories_dict[doc_id] = label_from_category(category)
+        
+# input.vw has format <label> <weight> |n <lowercased, stemmed text>
 with open('input.vw', 'w') as output, open(collection_file) as collection:
     for line in collection:
         doc_id, text = line.split('\t')
