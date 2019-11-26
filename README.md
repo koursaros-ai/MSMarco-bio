@@ -25,7 +25,7 @@ Pretrained Model  | Finetuning Dataset              | BioMARCO Dev MRR@10 <sup>[
 <a href = 'https://github.com/naver/biobert-pretrained'>biobert-pubmed-v1.1</a> | MSMarco | 0.17070 | 
 BM25 | - | 0.10366
 
-Download dataset <a href=''>here</a> or follow guide below to reproduce it.
+Download dataset <a href='https://storage.googleapis.com/koursaros/bio-collectionandqueries.tar.gz'>here</a> or follow guide below to reproduce it.
 
 <sup>[1]</sup> Reranking top 50 results from BM25
 
