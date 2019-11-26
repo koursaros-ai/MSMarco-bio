@@ -1,20 +1,34 @@
 import os
-from api import MsMarco
 from tqdm import tqdm
 import argparse
-import random
 
-DATA_DIR = './collectionandqueries'
-OUT_DIR = './msmarco-bio'
+
+def load_queries(set_name):
+  queries = dict()
+  print('loading %s queries..' % set_name)
+  query_file_path = os.path.join(args.data_dir, 'queries.%s.tsv' % set_name)
+  with open(query_file_path) as query_file:
+    for line in query_file:
+      qid, query = line.strip().split('\t')
+      queries[qid] = query
+  return queries
+
+
+def load_qrels(set_name):
+  qrels = set()
+  docs_to_queries = dict()
+  qrels_file_path = os.path.join(args.data_dir, 'qrels.%s.tsv' % set_name)
+  with open(qrels_file_path) as qrels_file:
+    for line in qrels_file:
+      qid, _, doc_id, _ = line.strip().split('\t')
+      qrels.add((qid, doc_id))
+      docs_to_queries[doc_id] = qid
+  return qrels, docs_to_queries
 
 
 def main(args):
-  bioset = set()
-
-  qrels_tsv_path = os.path.join(OUT_DIR, 'qrels.dev.small.tsv')
-  queries_tsv_path = os.path.join(OUT_DIR, 'queries.dev.tsv')
-
-  os.makedirs(OUT_DIR, exist_ok=True)
+  subset = set()
+  os.makedirs(args.out_dir, exist_ok=True)
 
   print('loading preds..')
   preds_file = os.path.join(args.data_dir, 'preds')
@@ -22,61 +36,47 @@ def main(args):
     for line in preds:
       pred, doc_id = line.strip().split(' ')
       if float(pred) > 0.5:
-        bioset.add(doc_id.strip())
+        subset.add(doc_id)
 
-  print('Bioset size %s' % len(bioset))
-
-  queries = dict()
-  print('loading queries..')
-  query_file_path = os.path.join(args.data_dir, 'queries.train.tsv')
-  with open(query_file_path) as query_file:
-    for line in query_file:
-      qid, query = line.strip().split('\t')
-      queries[qid] = query
-
-  qrels = set()
-  docs_to_queries = dict()
-  qrels_file_path = os.path.join(args.data_dir, 'qrels.train.tsv')
-  with open(qrels_file_path) as qrels_file:
-    for line in qrels_file:
-      qid, _, doc_id, _ = line.strip().split('\t')
-      qrels.add((qid, doc_id))
-      docs_to_queries[doc_id] = qid
+  print('Subset size is %s passages' % len(subset))
 
   collection_file = os.path.join(args.data_dir, 'collection.tsv')
-  collection_size = len([ _ for line in open(collection_file)])
+  collection_size = len([' ' for _ in open(collection_file)])
+
+  qrels_map = dict()
+  queries_map = dict()
+  qrels_files = dict()
+  queries_files = dict()
+
+  sets = ['train', 'dev.small']
+  for set_name in sets:
+    qrels_map[set_name] = load_qrels(set_name)
+    queries_map[set_name] = load_queries(set_name)
+    qrels_files[set_name] = open(os.path.join(args.out_dir, 'qrels.%s.tsv' % set_name), 'w')
+    queries_files[set_name] = open(os.path.join(args.out_dir, 'queries.%s.tsv' % set_name), 'w')
+
   example_num = 0
-  qrels_dev_file = open(qrels_tsv_path, 'w')
-  queries_dev_file = open(queries_tsv_path, 'w')
-  with open(collection_file) as collection, open(os.path.join(args.out_dir, 'collection.tsv'), 'w') as bio:
-    with tqdm(total=api.collection_size, desc='BUILDING TRAINING SET') as pbar:
-      for line in collection:
-        doc_id, text = line.strip().split('\t')
-        if doc_id in bioset:
-          bio.write(line)
-          if doc_id in docs_to_queries:
-            qid = docs_to_queries[doc_id]
-            example_num += 1
-            if example_num < 5000:
-              qrels_dev_file.write('\t'.join([str(qid), '0', str(doc_id), '1']) + '\n')
-              queries_dev_file.write(qid + '\t' + queries[qid] + '\n')
-            else:
-              doc_ids, docs = api.es_query(queries[qid], 100)
-              negative_example_idx = random.randrange(0, len(docs)-2)
-              # if negative example is the same as the positive, choose the next instead
-              if doc_ids[negative_example_idx] == doc_id:
-                negative_example_idx += 1
-              sample = queries[qid] + '\t' + text + '\t' + docs[negative_example_idx] + '\n'
-              train.write(sample)
-        pbar.update()
+  with open(os.path.join(args.out_dir, 'collection.tsv'), 'w') as subset_collection:
+    with open(collection_file) as collection:
+      with tqdm(total=collection_size, desc='BUILDING %s SETS' % (','.join(sets))) as pbar:
+        for line in collection:
+          doc_id, text = line.strip().split('\t')
+          if doc_id in subset:
+            subset_collection.write(line)
+            for split in sets:
+              qrels, docs_to_queries = qrels_map[split]
+              queries = queries_map[split]
+              if doc_id in docs_to_queries:
+                qid = docs_to_queries[doc_id]
+                example_num += 1
+                qrels_files[split].write('\t'.join([str(qid), '0', str(doc_id), '1']) + '\n')
+                queries_files[split].write(qid + '\t' + queries[qid] + '\n')
+          pbar.update()
 
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Build training subset')
-  parser.add_argument('--es_host', default='localhost')
-  parser.add_argument('--es_port', default=9200)
-  parser.add_argument('--out_dir', default=OUT_DIR)
-  parser.add_argument('--data_dir', default=DATA_DIR)
-  parser.add_argument('--shards', default=1)
+  parser.add_argument('--data_dir', default='./collectionandqueries')
+  parser.add_argument('--out_dir', default='./bio-collectionandqueries')
   args = parser.parse_args()
   main(args)

@@ -5,9 +5,16 @@ There is a notable lack of large scale, easy to use, labeled data sets for infor
 
 This repo includes code to generate a subset of **75,000 labeled MS Marco queries related to health and biology**, but it could easily be adapted for any specific domain.
 
-Clone repo and then run:
+To build the dataset, clone repo and then run:
 
 `pip install -r requirements.txt`
+
+Or download it here.
+
+Examples of queries in the subset:
+- what normal blood pressure by age?
+- what is your mandible?
+- what part is the sigmoid colon?
 
 Baseline Results for BioMARCO
 --
@@ -25,9 +32,9 @@ Download dataset <a href=''>here</a> or follow guide below to reproduce it.
 Labelling 10k Passages with Google Natural Language API
 --
 
-Up to 30k/month document classifications are **free** using <a href = 'https://cloud.google.com/natural-language/'>Google's API</a>. It classifies any text into 700+ categories, and it also reports confidence scores.
+Up to 30k/month document classifications are **free** using <a href = 'https://cloud.google.com/natural-language/'>Google's API</a>. It can be used to classify passages into 700+ categories, and it also reports confidence scores.
 
-**You need to sign up for google cloud and authenticate your client first, see https://cloud.google.com/natural-language/docs/reference/libraries**
+**You need to sign up for Google Cloud and authenticate your client first, see https://cloud.google.com/natural-language/docs/reference/libraries**
 
 Then run:
 
@@ -36,12 +43,14 @@ from google.cloud import language
 from google.cloud.language import enums
 from google.cloud.language import types
 
+SUBSET_SIZE = 10000 # the number of passages to classify
+
 client = language.LanguageServiceClient()
 
 with open('./categories.tsv', 'w+') as outfile:
     with open('./collectionandqueries/collection.tsv') as collection:
         for i, line in enumerate(collection):
-            if i > 10000: break
+            if i > SUBSET_SIZE: break
             try:
                 doc_id, doc_text = line.split('\t')
                 document = types.Document(
@@ -50,18 +59,18 @@ with open('./categories.tsv', 'w+') as outfile:
                 category = client.classify_text(document)
                 for cat in category.categories:
                     outfile.write(doc_id+'\t'+cat.name+'\t'+str(cat.confidence)+'\n')
-            except: # sometimes the document is too short and the API with err, ignore
+            except: # sometimes the document is too short and the API will err, ignore
                 pass
 ```
 
-Creating a Faster Text Classifier with Vowpal Wabbit
+Creating a Text Classifier for the Rest of the Set
 --
 
 We use <a href='https://github.com/VowpalWabbit/vowpal_wabbit'>vowpal-wabbit</a> to build a binary text classifier that can classify the entire rest of the set very fast and for free. Make sure it is installed. (type `vw --help` on the bash). 
 
 ### Build a training set for a health related classifier
 
-Define a function to extract a binary label form the Google NLP Cateogry. In our case we use health/ science.
+Define a function to extract a binary label form the Google NLP Cateogry. In our case we use health/ science:
 
 ```python
 def label_from_category(category, confidence):
@@ -101,40 +110,31 @@ Then train a classifier with this data and save it as bio_model:
 Classifying MSMarco
 --
 
-**Note: I don't use python for this process because it's much slower**
-
 - Download MsMarco collection+queries:
     `wget https://msmarco.blob.core.windows.net/msmarcoranking/collectionandqueries.tar.gz`
 - Extract:
     `tar -xvzf collectionandqueries.tar.gz`
 
+- Build the porter stmr cli from this repo: https://github.com/wooorm/stmr and make sure it's in your path.
 
-Build the porter stmr cli from this repo: https://github.com/wooorm/stmr and make sure it's in your path.
-
-Classify the entire `collections.tsv` from MS Marco, producing a file `preds` of format {passage_id} {score}. The higher the score, the more likely it's related to health/ bio.
-`./run.sh`
-or 
-
-**NOTE: The tab in the first sed often turns into a space if you copy/ paste. You need to press ctrl-v on the bash and then tab to replace it. or just run the run.sh script**
-```bash
-export DATA_DIR=collectionandqueries
-sed 's/ /|n /' collectionandqueries/collection.tsv \
-| sed "s/:/ /g" | sed "s/,/ /g" | sed "s/\./ /g" | \
-tr '[:upper:]' '[:lower:]' | stmr | \
-vw -i bio_model --ngram n2 --skips n1 --predictions $DATA_DIR/preds
-```
+- Run `./classify_msmarco ./collectionandqueries` from MS Marco, producing a file `preds` of format {passage_id} {score}. The higher the score, the more likely it's related to health / bio. 
 
 Building Collection and Queries for the Subset
 --
 
-<a href = 'https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html'>Set up an Elasticsearch instance</a> if you don't already have one, we need this to produce negative training examples using BM25.
+Run this python script:
 
-Build a training set of the triples of form 
-`{query}    {positive example}  {negative example}`
+`python3 build_dataset.py --data_dir <path to collectionsandqueries dir> --out_dir <bio-collectionsandqueries>`
 
-And collection.tsv, queries.dev.tsv and qrels.dev.small.tsv of the same form as the original MS Marco dataset.
+The output folder should contain:
 
-`python3 build_dataset.py --es_host <elasticsearch host> --es_port <es port> --out_dir <out_dir>...`
+- `collection.tsv`
+- `qrels.dev.small.tsv`
+- `qrels.train.tsv`
+- `queries.dev.small.tsv`
+- `queries.train.tsv`
+
+Look <a href = 'https://github.com/microsoft/MSMARCO-Passage-Ranking'>here</a> for more details about the format of these.
 
 
 
