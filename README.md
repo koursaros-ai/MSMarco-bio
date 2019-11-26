@@ -9,15 +9,16 @@ To build the dataset, clone repo and then run:
 
 `pip install -r requirements.txt`
 
-Or download it here.
-
 Examples of queries in the subset:
 - what normal blood pressure by age?
 - what is your mandible?
 - what part is the sigmoid colon?
 
-Baseline Results for BioMARCO
+Baseline Leaderboard for BioMARCO
 --
+
+Check out our project <a href = 'https://github.com/koursaros-ai/nboost'>NBoost</a> to download and deploy the models with Elasticsearch.
+
 
 Pretrained Model  | Finetuning Dataset              | BioMARCO Dev MRR@10 <sup>[1]</sup> |
 ------------------| --------------------------------| -------------------------------------- |
@@ -25,7 +26,7 @@ Pretrained Model  | Finetuning Dataset              | BioMARCO Dev MRR@10 <sup>[
 <a href = 'https://github.com/naver/biobert-pretrained'>biobert-pubmed-v1.1</a> | MSMarco | 0.17070 | 
 BM25 | - | 0.10366
 
-Download dataset <a href='https://storage.googleapis.com/koursaros/bio-collectionandqueries.tar.gz'>here</a> or follow guide below to reproduce it.
+Download dataset <a href='https://storage.googleapis.com/koursaros/bio-collectionandqueries.tar.gz'>here</a> or follow guide below to build it.
 
 <sup>[1]</sup> Reranking top 50 results from BM25
 
