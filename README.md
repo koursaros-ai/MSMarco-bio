@@ -17,8 +17,6 @@ Examples of queries in the subset:
 Baseline Leaderboard for BioMARCO
 --
 
-Check out our project <a href = 'https://github.com/koursaros-ai/nboost'>NBoost</a> to download and deploy the models with Elasticsearch.
-
 
 Pretrained Model  | Finetuning Dataset              | BioMARCO Dev MRR@10 <sup>[1]</sup> |
 ------------------| --------------------------------| -------------------------------------- |
@@ -27,6 +25,8 @@ Pretrained Model  | Finetuning Dataset              | BioMARCO Dev MRR@10 <sup>[
 BM25 | - | 0.10366
 
 Download dataset <a href='https://storage.googleapis.com/koursaros/bio-collectionandqueries.tar.gz'>here</a> or follow guide below to build it.
+
+Check out our main project <a href = 'https://github.com/koursaros-ai/nboost'>NBoost</a> to download and deploy the models with Elasticsearch.
 
 <sup>[1]</sup> Reranking top 50 results from BM25
 
