@@ -1,4 +1,4 @@
-Building a Custom Search Relevance Training Set from Open Source Bing Queries
+Building a Custom Search Relevance Eval Set from Open Source Bing Queries
 --
 
 There is a notable lack of large scale, easy to use, labeled data sets for information retrieval in most specific domains.
@@ -13,22 +13,6 @@ Examples of queries in the subset generated for health/biology:
 - what normal blood pressure by age?
 - what is your mandible?
 - what part is the sigmoid colon?
-
-Baseline Leaderboard for Bio Subset
---
-
-
-Pretrained Model  | Finetuning Dataset              | BioMARCO Dev MRR@10 <sup>[1]</sup> |
-------------------| --------------------------------| -------------------------------------- |
-<a href = 'https://github.com/nyu-dl/dl4marco-bert'>bert-base-uncased-msmarco</a> | MSMarco  | **0.17281** |
-<a href = 'https://github.com/naver/biobert-pretrained'>biobert-pubmed-v1.1</a> | MSMarco | 0.17070 | 
-BM25 | - | 0.10366
-
-Download dataset <a href='https://storage.googleapis.com/koursaros/bio-collectionandqueries.tar.gz'>here</a> or follow guide below to build it. Look <a href = 'https://github.com/microsoft/MSMARCO-Passage-Ranking'>here</a> for more details about the format of the files.
-
-Check out our main project <a href = 'https://github.com/koursaros-ai/nboost'>NBoost</a> to download and deploy the models with Elasticsearch.
-
-<sup>[1]</sup> Reranking top 50 results from BM25
 
 Labelling 10k Passages with Google Natural Language API
 --
@@ -67,7 +51,7 @@ with open('./categories.tsv', 'w+') as outfile:
 Creating a Text Classifier for the Rest of the Set
 --
 
-We use <a href='https://github.com/VowpalWabbit/vowpal_wabbit'>vowpal-wabbit</a> to build a binary text classifier that can classify the rest of the set very fast and for free. Make sure it is installed. (type `vw --help` on the bash). 
+We use <a href='https://github.com/VowpalWabbit/vowpal_wabbit'>vowpal-wabbit</a>(VW) to build a binary text classifier that can classify the rest of the set very fast and for free. Make sure it is installed. (type `vw --help` on the bash). 
 
 Define a function to extract a binary label form the Google NLP Cateogry. In our case we use health/science:
 
@@ -124,7 +108,9 @@ Classifying MSMarco
 Building Collection and Queries for the Subset
 --
 
-Run this python script:
+The code for loading the collection and queries from MSMarco and then classifying them is a little more complicated so I won't go over it here. 
+
+If you want to product the set, clone <a href = 'https://github.com/koursaros-ai/MSMarco-bio'>this</a> repo and run the python script:
 
 `python3 build_dataset.py --data_dir <path to collectionsandqueries dir> --out_dir <bio-collectionsandqueries>`
 
@@ -138,6 +124,19 @@ The output folder should contain:
 
 Look <a href = 'https://github.com/microsoft/MSMARCO-Passage-Ranking'>here</a> for more details about the format of these.
 
+Evaluation Results for Bio Subset
+--
 
 
+Pretrained Model  | Finetuning Dataset              | BioMARCO Dev MRR@10 <sup>[1]</sup> |
+------------------| --------------------------------| -------------------------------------- |
+<a href = 'https://github.com/nyu-dl/dl4marco-bert'>bert-base-uncased-msmarco</a> | MSMarco  | **0.17281** |
+<a href = 'https://github.com/naver/biobert-pretrained'>biobert-pubmed-v1.1</a> | MSMarco | 0.17070 | 
+BM25 | - | 0.10366
+
+Download dataset <a href='https://storage.googleapis.com/koursaros/bio-collectionandqueries.tar.gz'>here</a> or follow guide below to build it. Look <a href = 'https://github.com/microsoft/MSMARCO-Passage-Ranking'>here</a> for more details about the format of the files.
+
+Check out our main project <a href = 'https://github.com/koursaros-ai/nboost'>NBoost</a> to download and deploy the models with Elasticsearch.
+
+<sup>[1]</sup> Reranking top 50 results from BM25
 
