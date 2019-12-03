@@ -108,7 +108,9 @@ Classifying MSMarco
 Building Collection and Queries for the Subset
 --
 
-Run this python script:
+The code for loading the collection and queries from MSMarco and then classifying them is a little more complicated so I won't go over it here. 
+
+If you want to product the set, clone <a href = 'https://github.com/koursaros-ai/MSMarco-bio'>this</a> repo and run the python script:
 
 `python3 build_dataset.py --data_dir <path to collectionsandqueries dir> --out_dir <bio-collectionsandqueries>`
 
