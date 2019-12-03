@@ -1,4 +1,4 @@
-Building a Custom Search Relevance Training Set from Open Source Bing Queries
+Building a Custom Search Relevance Eval Set from Open Source Bing Queries
 --
 
 There is a notable lack of large scale, easy to use, labeled data sets for information retrieval in most specific domains.
