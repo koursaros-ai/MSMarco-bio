@@ -31,8 +31,7 @@ def main(args):
   os.makedirs(args.out_dir, exist_ok=True)
 
   print('loading preds..')
-  preds_file = os.path.join(args.data_dir, 'preds')
-  with open(preds_file) as preds:
+  with open(args.preds_file) as preds:
     for line in preds:
       pred, doc_id = line.strip().split(' ')
       if float(pred) > 0.5:
@@ -77,6 +76,7 @@ def main(args):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Build training subset')
   parser.add_argument('--data_dir', default='./collectionandqueries')
-  parser.add_argument('--out_dir', default='./bio-collectionandqueries')
+  parser.add_argument('--out_dir', default='./collectionandqueries-subset')
+  parser.add_argument('--preds_file', default='./preds')
   args = parser.parse_args()
   main(args)
