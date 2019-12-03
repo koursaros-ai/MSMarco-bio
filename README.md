@@ -14,22 +14,6 @@ Examples of queries in the subset generated for health/biology:
 - what is your mandible?
 - what part is the sigmoid colon?
 
-Baseline Leaderboard for Bio Subset
---
-
-
-Pretrained Model  | Finetuning Dataset              | BioMARCO Dev MRR@10 <sup>[1]</sup> |
-------------------| --------------------------------| -------------------------------------- |
-<a href = 'https://github.com/nyu-dl/dl4marco-bert'>bert-base-uncased-msmarco</a> | MSMarco  | **0.17281** |
-<a href = 'https://github.com/naver/biobert-pretrained'>biobert-pubmed-v1.1</a> | MSMarco | 0.17070 | 
-BM25 | - | 0.10366
-
-Download dataset <a href='https://storage.googleapis.com/koursaros/bio-collectionandqueries.tar.gz'>here</a> or follow guide below to build it. Look <a href = 'https://github.com/microsoft/MSMARCO-Passage-Ranking'>here</a> for more details about the format of the files.
-
-Check out our main project <a href = 'https://github.com/koursaros-ai/nboost'>NBoost</a> to download and deploy the models with Elasticsearch.
-
-<sup>[1]</sup> Reranking top 50 results from BM25
-
 Labelling 10k Passages with Google Natural Language API
 --
 
@@ -138,6 +122,19 @@ The output folder should contain:
 
 Look <a href = 'https://github.com/microsoft/MSMARCO-Passage-Ranking'>here</a> for more details about the format of these.
 
+Evaluation Results for Bio Subset
+--
 
 
+Pretrained Model  | Finetuning Dataset              | BioMARCO Dev MRR@10 <sup>[1]</sup> |
+------------------| --------------------------------| -------------------------------------- |
+<a href = 'https://github.com/nyu-dl/dl4marco-bert'>bert-base-uncased-msmarco</a> | MSMarco  | **0.17281** |
+<a href = 'https://github.com/naver/biobert-pretrained'>biobert-pubmed-v1.1</a> | MSMarco | 0.17070 | 
+BM25 | - | 0.10366
+
+Download dataset <a href='https://storage.googleapis.com/koursaros/bio-collectionandqueries.tar.gz'>here</a> or follow guide below to build it. Look <a href = 'https://github.com/microsoft/MSMARCO-Passage-Ranking'>here</a> for more details about the format of the files.
+
+Check out our main project <a href = 'https://github.com/koursaros-ai/nboost'>NBoost</a> to download and deploy the models with Elasticsearch.
+
+<sup>[1]</sup> Reranking top 50 results from BM25
 
