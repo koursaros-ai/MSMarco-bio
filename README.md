@@ -51,7 +51,7 @@ with open('./categories.tsv', 'w+') as outfile:
 Creating a Text Classifier for the Rest of the Set
 --
 
-We use <a href='https://github.com/VowpalWabbit/vowpal_wabbit'>vowpal-wabbit</a> to build a binary text classifier that can classify the rest of the set very fast and for free. Make sure it is installed. (type `vw --help` on the bash). 
+We use <a href='https://github.com/VowpalWabbit/vowpal_wabbit'>vowpal-wabbit</a>(VW) to build a binary text classifier that can classify the rest of the set very fast and for free. Make sure it is installed. (type `vw --help` on the bash). 
 
 Define a function to extract a binary label form the Google NLP Cateogry. In our case we use health/science:
 
