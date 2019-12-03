@@ -1,20 +1,20 @@
-MSMarco-Bio
+Building a Custom Search Relevance Training Set from Open Source Bing Queries
 --
 
-There is a notable lack of large scale, easy to use, labeled data sets for information retrieval in health / medicine.
+There is a notable lack of large scale, easy to use, labeled data sets for information retrieval in most specific domains.
 
-This repo includes code to generate a subset of **75,000 labeled MS Marco queries related to health and biology**, but it could easily be adapted for any specific domain.
+**This repo includes code to generate search queries and passages related to a specific domain or field of knowledge.** We achieve this by selecting a subset of the popular MS Marco dataset. The full MS Marco training set released by Microsoft is much too large to use in it's entirety as a training set.
 
 To build the dataset, clone repo and then run:
 
 `pip install -r requirements.txt`
 
-Examples of queries in the subset:
+Examples of queries in the subset generated for health/biology:
 - what normal blood pressure by age?
 - what is your mandible?
 - what part is the sigmoid colon?
 
-Baseline Leaderboard for BioMARCO
+Baseline Leaderboard for Bio Subset
 --
 
 
@@ -67,18 +67,19 @@ with open('./categories.tsv', 'w+') as outfile:
 Creating a Text Classifier for the Rest of the Set
 --
 
-We use <a href='https://github.com/VowpalWabbit/vowpal_wabbit'>vowpal-wabbit</a> to build a binary text classifier that can classify the entire rest of the set very fast and for free. Make sure it is installed. (type `vw --help` on the bash). 
+We use <a href='https://github.com/VowpalWabbit/vowpal_wabbit'>vowpal-wabbit</a> to build a binary text classifier that can classify the rest of the set very fast and for free. Make sure it is installed. (type `vw --help` on the bash). 
 
-### Build a training set for a health related classifier
-
-Define a function to extract a binary label form the Google NLP Cateogry. In our case we use health/ science:
+Define a function to extract a binary label form the Google NLP Cateogry. In our case we use health/science:
 
 ```python
 def label_from_category(category, confidence):
     return (1 if 'Health' in category 
     or 'Science' in category else 0, confidence)
+```
 
-## Then use it to build a VW traininig set
+Then use it to build a VW training set
+
+```python
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 import re
